@@ -1,5 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
+#Simple workfow to build CoreELEC for Phicomm N1
 name: CI
 
 # Controls when the workflow will run
@@ -23,7 +22,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Initialization Environment
         run: |
@@ -31,10 +30,16 @@ jobs:
           git branch -v
           sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/share/man
           sudo -E apt-get -qq update
-          sudo -E apt-get install gcc make git unzip wget xz-utils bc gperf zip unzip g++  build-essential patchutils lzop xfonts-utils xsltproc libjson-perl cmake texinfo default-jre libncurses5-dev file zstd libparse-yapp-perl
+          sudo -E apt-get install gcc make git unzip wget xz-utils bc gperf zip unzip g++  build-essential patchutils lzop xfonts-utils xsltproc libjson-perl cmake texinfo default-jre libncurses5-dev file zstd libparse-yapp-perl libxml-parser-perl
           sudo -E apt-get -qq autoremove --purge
-        
-      # Runs main build script
+
+      - name: Cache downloaded packages
+        uses: actions/cache@v3
+        with:
+          path: |
+                sources
+          key: CoreELEC-Phicomm-N1-sources-${{ runner.os }}-${{ hashFiles('./mkn1') }}
+
       - name: Run build
         run: ./mkn1
       
